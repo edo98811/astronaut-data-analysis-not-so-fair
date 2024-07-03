@@ -1,30 +1,56 @@
-## Not so good astronaut data analysis code
+# Overview
+Spacewalks is a python-based analysis tool for researchers to generate visualisations
+and statistical summaries of NASA's extravehicular activity datasets.
 
-This repository contains a helper software project with some code to be used 
-for the [FAIR research software course](https://github.com/carpentries-incubator/fair-research-software). 
+## Features
+Key features of Spacewalks:
+- Generates a CSV table of summary statistics of extravehicular activity crew sizes
+- Generates a line plot to show the cumulative duration of space walks over time
 
-This repository is an example of "not so good" software that is meant to be improved over the course to show examples of better 
-and more FAIR software practices. 
+## Pre-requisites
+Spacewalks was developed using Python version 3.12
 
-### What the code does
-The code uses the [NASA data on human space walks (Extravehicular activities - EVAs)](https://data.nasa.gov/Raw-Data/Extra-vehicular-Activity-EVA-US-and-Russia/9kcy-zwvn/data_preview), 
-exported/downloaded in JSON format, does some analysis over this data, plots a few graphs and saves the data in CSV format. 
+To install and run Spacewalks you will to need have Python >=3.12 
+installed. You will also need the following libraries (minimum versions in brackets)
 
-### Things to improve
-There is a number of things that are wrong or not so good with this code and that can be improved. We maintain that list at issue
-https://github.com/carpentries-incubator/astronout-data-analyses-bad/issues/2.
+- [NumPy](https://www.numpy.org/) >=2.0.0 - Spacewalk's test suite uses NumPy's statistical functions
+- [Matplotlib](https://matplotlib.org/stable/index.html) >=3.0.0  - Spacewalks uses Matplotlib to make plots
+- [pytest](https://docs.pytest.org/en/8.2.x/#) >=8.2.0  - Spacewalks uses pytest for testing
+- [pandas](https://pandas.pydata.org/) >= 2.2.0 - Spacewalks uses pandas for data frame manipulation 
 
-### Better code
-An example of better and more FAIR code that participants should strive to achieve when writing their reseach software 
-can be found at the [astronout-data-analysis-fair repository](https://github.com/carpentries-incubator/astronout-data-analysis-fair), 
-to be used in conjuction with this repository during the course.
+## Installation Instructions
 
-### Acknowledgements
++ Clone the Spacewalks repository to your local machine using Git.
+If you don't have Git installed, you can download it from the official Git website.
 
-#### Data
-We used public data on astronauts and spacewalks available from [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page).
 
-#### Software Sustainability Institute and UKRN
+git clone https://github.com/your-repository-url/spacewalks.git
+cd spacewalks
 
-This work has been supported by the [UK's Software Sustainability Institute](https://software.ac.uk) via the [EPSRC, BBSRC, ESRC, NERC, AHRC, STFC and MRC grant EP/S021779/1](https://gow.epsrc.ukri.org/NGBOViewGrant.aspx?GrantRef=EP/S021779/1)
-and [UK Reproducibility Network (UKRN)](https://www.ukrn.org/).
+
++ Install the necessary dependencies:
+
+```bash
+pip install pandas==2.2.2 matplotlib==3.8.4 numpy==2.0.0 pytest==7.4.2
+```
+
+
++ To ensure everything is working correctly, run the tests using pytest.
+
+```bash
+python -m pytest
+```
+
+
+## Usage Example
+
+To run an analysis using the eva_data_analysis.py script from the command line terminal,
+launch the script using Python as follows.
+
+```bash
+python eva_data_analysis.py eva-data.json eva-data.csv
+```
+
+where: 
+- the first argument is path to the Json data file.
+- the second argument is the path the CSV output file.
