@@ -45,7 +45,7 @@ python -m pytest
 ## Usage Example
 
 To run an analysis using the eva_data_analysis.py script from the command line terminal,
-launch the script using Python as follows.
+launch the script using Python as follows:
 
 ```bash
 python eva_data_analysis.py eva-data.json eva-data.csv
