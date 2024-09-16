@@ -1,6 +1,3 @@
-import json
-import csv
-import datetime as dt
 import matplotlib.pyplot as plt
 import pandas as pd
 
