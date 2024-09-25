@@ -1,105 +1,160 @@
-import pytest
+import matplotlib.pyplot as plt
 import pandas as pd
-import pandas.testing as pdt
-import numpy as np
+import sys
+import re
 
-from eva_data_analysis import (
-    text_to_duration,
-    calculate_crew_size,
-    summarise_categorical
-)
+# https://data.nasa.gov/resource/eva.json (with modifications)
 
-def test_text_to_duration_integer():
+
+def main(input_file, output_file, graph_file):
+    print("--START--")
+
+    eva_data = read_json_to_dataframe(input_file)
+
+    eva_data = add_crew_size_column(eva_data)
+
+    write_dataframe_to_csv(eva_data, output_file)
+
+    plot_cumulative_time_in_space(eva_data, graph_file)
+
+    print("--END--")
+
+def read_json_to_dataframe(input_file):
     """
-    Test that text_to_duration returns expected ground truth values
-    for typical whole hour durations
+    Read the data from a JSON file into a Pandas dataframe.
+    Clean the data by removing any incomplete rows and sort by date
+
+    Args:
+        input_file (str): The path to the JSON file.
+
+    Returns:
+         eva_df (pd.DataFrame): The cleaned and sorted data as a dataframe structure
     """
-    actual_result =  text_to_duration("10:00")
-    expected_result = 10
-    assert actual_result == expected_result
+    print(f'Reading JSON file {input_file}')
+    eva_df = pd.read_json(input_file, convert_dates=['date'])
+    eva_df['eva'] = eva_df['eva'].astype(float)
+    eva_df.dropna(axis=0, inplace=True)
+    eva_df.sort_values('date', inplace=True)
+    return eva_df
 
-def test_text_to_duration_float():
+
+def write_dataframe_to_csv(df, output_file):
     """
-    Test that text_to_duration returns expected ground truth values
-    for typical durations with a non-zero minute component
+    Write the dataframe to a CSV file.
+
+    Args:
+        df (pd.DataFrame): The input dataframe.
+        output_file (str): The path to the output CSV file.
+
+    Returns:
+        None
     """
-    actual_result = text_to_duration("10:20")
-    expected_result = 10.33333333
-    assert actual_result == pytest.approx(expected_result)
+    print(f'Saving to CSV file {output_file}')
+    df.to_csv(output_file, index=False)
 
-def test_calculate_crew_size():
+def text_to_duration(duration):
     """
-    Test that calculate_crew_size returns expected ground truth values
-    for typical crew values
+    Convert a text format duration "HH:MM" to duration in hours
+
+    Args:
+        duration (str): The text format duration
+
+    Returns:
+        duration_hours (float): The duration in hours
     """
-    actual_result = calculate_crew_size("Valentina Tereshkova;")
-    expected_result = 1
-    assert actual_result == expected_result
-
-    actual_result = calculate_crew_size("Judith Resnik; Sally Ride;")
-    expected_result = 2
-    assert actual_result == expected_result
+    hours, minutes = duration.split(":")
+    duration_hours = int(hours) + int(minutes)/60
+    return duration_hours
 
 
-def test_calculate_crew_size_edge_cases():
+def add_duration_hours_variable(df):
     """
-    Test that calculate_crew_size returns expected ground truth values
-    for edge case where crew is an empty string
+    Add duration in hours (duration_hours) variable to the dataset
+
+    Args:
+        df (pd.DataFrame): The input dataframe.
+
+    Returns:
+        df_copy (pd.DataFrame): A copy of df_ with the new duration_hours variable added
     """
-    actual_result = calculate_crew_size("")
-    assert actual_result is None
+    df_copy = df.copy()
+    df_copy["duration_hours"] = df_copy["duration"].apply(
+        text_to_duration
+    )
+    return df_copy
 
 
-def test_summarise_categorical():
+def plot_cumulative_time_in_space(df, graph_file):
     """
-    Test that summarise_categorical correctly tabulates
-    distribution of values (counts, percentages) for a simple ground truth
-    example
+    Plot the cumulative time spent in space over years
+
+    Convert the duration column from strings to number of hours
+    Calculate cumulative sum of durations
+    Generate a plot of cumulative time spent in space over years and
+    save it to the specified location
+
+    Args:
+        df (pd.DataFrame): The input dataframe.
+        graph_file (str): The path to the output graph file.
+
+    Returns:
+        None
     """
-    test_input = pd.DataFrame({
-        'country': ['USA', 'USA', 'USA', "Russia", "Russia"],
-    }, index=[0, 1, 2, 3, 4])
-
-    expected_result = pd.DataFrame({
-        'country': ["Russia", "USA"],
-        'count': [2, 3],
-        'percentage': [40.0, 60.0],
-    }, index=[0, 1])
-
-    actual_result = summarise_categorical(test_input, "country")
-
-    pdt.assert_frame_equal(actual_result, expected_result)
+    print(f'Plotting cumulative spacewalk duration and saving to {graph_file}')
+    df = add_duration_hours_variable(df)
+    df['cumulative_time'] = df['duration_hours'].cumsum()
+    plt.plot(df.date, df.cumulative_time, 'ko-')
+    plt.xlabel('Year')
+    plt.ylabel('Total time spent in space to date (hours)')
+    plt.tight_layout()
+    plt.savefig(graph_file)
+    plt.show()
 
 
-def test_summarise_categorical_missvals():
+def calculate_crew_size(crew):
     """
-    Test that summarise_categorical correctly tabulates
-    distribution of values (counts, percentages) for a ground truth
-    example (edge case where column contains missing values)
+    Calculate the size of the crew for a single crew entry
+
+    Args:
+        crew (str): The text entry in the crew column containing a list of crew member names
+
+    Returns:
+        int: The crew size
     """
-    test_input = pd.DataFrame({
-        'country': ['USA', 'USA', 'USA', "Russia", pd.NA],
-    }, index=[0, 1, 2, 3, 4])
-
-    expected_result = pd.DataFrame({
-        'country': ["Russia", "USA", np.nan],
-        'count': [1, 3, 1],
-        'percentage': [20.0, 60.0, 20.0],
-    }, index=[0, 1, 2])
-    actual_result = summarise_categorical(test_input, "country")
-
-    pdt.assert_frame_equal(actual_result, expected_result)
-    
+    if crew.split() == []:
+        return None
+    else:
+        return len(re.split(r';', crew))-1
 
 
-def test_summarise_categorical_invalid():
+def add_crew_size_column(df):
     """
-    Test that summarise_categorical raises an
-    error when a non-existent column is input
-    """
-    test_input = pd.DataFrame({
-        'country': ['USA', 'USA', 'USA', "Russia", "Russia"],
-    }, index=[0, 1, 2, 3, 4])
+    Add crew_size column to the dataset containing the value of the crew size
 
-    with pytest.raises(KeyError):
-        summarise_categorical(test_input, "country-2")
+    Args:
+        df (pd.DataFrame): The input data frame.
+
+    Returns:
+        df_copy (pd.DataFrame): A copy of df_ with the new crew_size variable added
+    """
+    print('Adding crew size variable (crew_size) to dataset')
+    df_copy = df.copy()
+    df_copy["crew_size"] = df_copy["crew"].apply(
+        calculate_crew_size
+    )
+    return df_copy
+
+
+if __name__ == "__main__":
+
+    if len(sys.argv) < 3:
+        input_file = 'data/eva-data.json'
+        output_file = 'results/eva-data.csv'
+        print(f'Using default input and output filenames')
+    else:
+        input_file = sys.argv[1]
+        output_file = sys.argv[2]
+        print('Using custom input and output filenames')
+
+    graph_file = 'results/cumulative_eva_graph.png'
+    main(input_file, output_file, graph_file)
