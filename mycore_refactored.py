@@ -46,7 +46,7 @@ def text_to_duration(duration):
         duration_hours (float): The duration in hours
     """
     hours, minutes = duration.split(":")
-    duration_hours = int(hours) + int(minutes)/6  # there is an intentional bug on this line (should divide by 60 not 6)
+    duration_hours = int(hours) + int(minutes)/60  # fixed the bug here
     return duration_hours
 
 
@@ -98,9 +98,9 @@ def plot_cumulative_time_in_space(df, graph_file):
 
 print("--START--")
 
-input_file = open('./eva-data.json', 'r')
-output_file = open('./eva-data.csv', 'w')
-graph_file = './cumulative_eva_graph.png'
+input_file = './data/eva-data.json'
+output_file = './results/eva-data.csv'
+graph_file = './results/cumulative_eva_graph.png'
 
 eva_data = read_json_to_dataframe(input_file)
 
