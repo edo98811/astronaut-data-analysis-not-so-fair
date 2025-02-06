@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-
+from counting_crew_members import add_crew_size_column
 
 def read_json_to_dataframe(input_file):
     """
