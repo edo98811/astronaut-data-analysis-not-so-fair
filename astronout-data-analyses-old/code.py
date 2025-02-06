@@ -1,6 +1,6 @@
 #https://data.nasa.gov/Raw-Data/Extra-vehicular-Activity-EVA-US-and-Russia/9kcy-zwvn/about_data
 
-csvfile = open('/home/sarah/Projects/ssi-ukrn-fair-course/Extra-vehicular_Activity__EVA__-_US_and_Russia_20240126.csv', 'r')
+csvfile = open('astronout-data-analyses-old/Extra-vehicular_Activity__EVA__-_US_and_Russia_20240126.csv', 'r')
 jsonfile= open('file.json', 'a')
 fieldnames = ("EVA #", "Country", "Crew    ", "Vehicle", "Date", "Duration", "Purpose")
 
@@ -28,7 +28,7 @@ data.pop(0)
 import datetime as dt
 
 time = []
-date =[]
+date = []
 
 j=0
 for i in data:
