@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import json 
+
 
 # Data source: https://data.nasa.gov/resource/eva.json (with modifications)
 input_file = open('./eva-data.json', 'r')
