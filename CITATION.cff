@@ -8,14 +8,10 @@ message: >-
   metadata from this file.
 type: software
 authors:
-  - given-names: Jaffa
-    name-particle: Sarah
-  - given-names: Aleksandra
-    family-names: Nenadic
-  - given-names: Kamilla
-    family-names: Kopec-Harding
+  - given-names: Edoardo
+    name-particle: Filippi
 repository-code: >-
-  https://github.com/YOUR-REPOSITORY-URL/spacewalks.git
+  https://github.com/edo98811/astronaut-data-analysis-not-so-fair.git
 abstract: >-
   A Python script to analyse NASA extravehicular activity
   data
