@@ -1,3 +1,5 @@
+# License: MIT License
+
 import csv
 import datetime as dt
 import matplotlib.pyplot as plt
