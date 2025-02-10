@@ -1,5 +1,5 @@
 import pytest
-from eva_data_analysis import text_to_duration, calculate_crew_size
+from seva_data_analysis import text_to_duration, calculate_crew_size
 
 def test_text_to_duration_float():
     """
