@@ -1,7 +1,7 @@
 site_name: Spacewalks Documentation
 use_directory_urls: false
 theme:
-  name: "material"
+  name: "mkdocs"
   font: false
 nav:
   - Spacewalks Documentation: index.md
