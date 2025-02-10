@@ -26,3 +26,7 @@ installed. You will also need the following libraries (minimum versions in brack
 
 Clone the Spacewalks repository to your local machine using Git.
 If you don't have Git installed, you can download it from the official Git website.
+
+## Zenodo release 
+
+[![DOI](https://sandbox.zenodo.org/badge/928214938.svg)](https://handle.stage.datacite.org/10.5072/zenodo.164785)
